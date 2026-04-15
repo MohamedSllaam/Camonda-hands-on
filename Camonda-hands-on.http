@@ -1,0 +1,6 @@
+@Camonda_hands_on_HostAddress = http://localhost:5194
+
+GET {{Camonda_hands_on_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
