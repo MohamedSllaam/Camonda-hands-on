@@ -1,9 +1,8 @@
-﻿using Camonda_hands_on.Services;
-using Camonda_hands_on.Services.Interfaces;
-using Camonda_hands_on.Workers;
-using CateringOrchestrator.Workers;
+﻿using Camonda_hands_on.Services.Interfaces;
 using Zeebe.Client;
 using Microsoft.OpenApi.Models;
+using Camonda_hands_on.Workers.Catering;
+using Camonda_hands_on.Services.Catering;
 
 var builder = WebApplication.CreateBuilder(args);
 

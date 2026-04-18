@@ -1,6 +1,8 @@
-﻿namespace Camonda_hands_on.Workers;
+﻿namespace Camonda_hands_on.Workers.Catering;
+
 using Camonda_hands_on.Services.Interfaces;
-using Camonda_hands_on.Workers.Varibables;
+using Camonda_hands_on.Workers;
+using Camonda_hands_on.Workers.Catering.Varibables;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Zeebe.Client;
@@ -45,7 +47,7 @@ public class CateringRejectWorker : BaseWorkerService
             {
                 status = "REJECTED",
                 rejectedAt = DateTime.UtcNow.ToString("O"),
-                rejectionReason = rejectionReason
+                rejectionReason
             };
 
             await jobClient.NewCompleteJobCommand(job.Key)

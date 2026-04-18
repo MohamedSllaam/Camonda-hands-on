@@ -1,4 +1,4 @@
-﻿namespace Camonda_hands_on.Workers.Varibables;
+﻿namespace Camonda_hands_on.Workers.Catering.Varibables;
 using System.Text.Json.Serialization;
 
 public class CateringJobVariables

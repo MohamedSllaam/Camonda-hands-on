@@ -1,8 +1,8 @@
 ﻿using Camonda_hands_on.Services.Interfaces;
-using global::Camonda_hands_on.Models;
+using Camonda_hands_on.Models;
 using System.Collections.Concurrent;
 
-namespace Camonda_hands_on.Services;
+namespace Camonda_hands_on.Services.Catering;
 
 
 public class CateringService : ICateringService

@@ -1,8 +1,8 @@
-﻿namespace CateringOrchestrator.Workers;
+﻿namespace Camonda_hands_on.Workers.Catering;
 
 using Camonda_hands_on.Services.Interfaces;
 using Camonda_hands_on.Workers;
-using Camonda_hands_on.Workers.Varibables;
+using Camonda_hands_on.Workers.Catering.Varibables;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Zeebe.Client;
@@ -10,22 +10,22 @@ using Zeebe.Client.Api.Responses;
 using Zeebe.Client.Api.Worker;
 
 
-public class CateringTimeoutWorker : BaseWorkerService
+public class CateringWithdrawWorker : BaseWorkerService
 {
     private readonly ICateringService _cateringService;
 
-    public CateringTimeoutWorker(
+    public CateringWithdrawWorker(
         IZeebeClient zeebeClient,
-        ILogger<CateringTimeoutWorker> logger,
+        ILogger<CateringWithdrawWorker> logger,
         ICateringService cateringService)
-        : base(zeebeClient, logger, "CAT_CREATE_TIMEOUT", "catering-timeout-worker")
+        : base(zeebeClient, logger, "CAT_CREATE_WITHDRAW", "catering-withdraw-worker")
     {
         _cateringService = cateringService;
     }
 
     protected override async Task HandleJob(IJobClient jobClient, IJob job)
     {
-        Logger.LogInformation("⏰ Processing timeout for job: {JobKey}", job.Key);
+        Logger.LogInformation("📝 Processing withdrawal for job: {JobKey}", job.Key);
 
         try
         {
@@ -36,26 +36,29 @@ public class CateringTimeoutWorker : BaseWorkerService
                 throw new Exception("Invalid job variables: createRequestId is required");
             }
 
-            Logger.LogWarning("⚠️ Timeout for catering request: {RequestId}", variables.CreateRequestId);
+            var withdrawReason = variables.WithdrawReason ?? "Withdrawn by user";
 
-            await _cateringService.ProcessTimeoutAsync(variables.CreateRequestId);
+            Logger.LogInformation("Withdrawing catering request: {RequestId} - Reason: {Reason}",
+                variables.CreateRequestId, withdrawReason);
+
+            await _cateringService.ProcessWithdrawAsync(variables.CreateRequestId, withdrawReason);
 
             var updatedVariables = new
             {
-                status = "TIMEOUT",
-                timeoutTimestamp = DateTime.UtcNow.ToString("O"),
-                errorMessage = "No response from catering provider within expected timeframe"
+                status = "WITHDRAWN",
+                withdrawnAt = DateTime.UtcNow.ToString("O"),
+                withdrawReason
             };
 
             await jobClient.NewCompleteJobCommand(job.Key)
                 .Variables(JsonSerializer.Serialize(updatedVariables))
                 .Send();
 
-            Logger.LogInformation("✅ Completed timeout for request: {RequestId}", variables.CreateRequestId);
+            Logger.LogInformation("✅ Completed withdrawal for request: {RequestId}", variables.CreateRequestId);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "❌ Failed to process timeout job {JobKey}", job.Key);
+            Logger.LogError(ex, "❌ Failed to process withdrawal job {JobKey}", job.Key);
 
             await jobClient.NewFailCommand(job.Key)
                 .Retries(job.Retries - 1)
