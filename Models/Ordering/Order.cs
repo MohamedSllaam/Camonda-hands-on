@@ -18,6 +18,7 @@ public class Order
     public string? RejectionReason { get; set; }
     public DateTime? WithdrawnAt { get; set; }
     public string? WithdrawReason { get; set; }
+    public bool? IsEnough { get; set; }
     public DateTime? TimeoutAt { get; set; }
    
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Camonda_hands_on.Workers.Ordering;
+namespace Camonda_hands_on.Workers.Ordering.Variables;
 
 public class OrderingJobVariables
 {
@@ -21,5 +21,13 @@ public class OrderingJobVariables
 
     [JsonPropertyName("orderStatus")]
     public string OrderStatus { get; set; } = "Pending";
+
+    [JsonPropertyName("isEnough")]
+    public bool IsEnough { get; set; } 
+
+
+
+
+
 
 }

@@ -2,6 +2,7 @@
 using Camonda_hands_on.Services.Interfaces;
 using Camonda_hands_on.Services.Ordering;
 using Camonda_hands_on.Workers.Catering;
+using Camonda_hands_on.Workers.Ordering;
 using Microsoft.OpenApi.Models;
 using Zeebe.Client;
 
@@ -44,6 +45,14 @@ builder.Services.AddHostedService<CateringWithdrawWorker>();
 builder.Services.AddHostedService<CateringApproveWorker>();
 builder.Services.AddHostedService<CateringRejectWorker>();
 
+
+////
+// Register ordering workers
+builder.Services.AddHostedService<CheckBalanceWorker>();
+builder.Services.AddHostedService<CompletePaymentWorker>();
+builder.Services.AddHostedService<FailPaymentWorker>();
+builder.Services.AddHostedService<WithdrawOrderWorker>();
+
 var app = builder.Build();
 
 // Configure pipeline
@@ -69,7 +78,7 @@ var logger = app.Services.GetRequiredService<ILogger<Program>>();
 try
 {
     // Path to your BPMN file
-    string bpmnFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "catering-agreement.bpmn");
+    string bpmnFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Bill_Check_Out.bpmn");
 
     if (File.Exists(bpmnFilePath))
     {

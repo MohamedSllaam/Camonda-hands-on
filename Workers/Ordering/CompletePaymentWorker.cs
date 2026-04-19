@@ -7,22 +7,22 @@ using Zeebe.Client.Api.Worker;
 
 namespace Camonda_hands_on.Workers.Ordering;
 
-public class WithdrawOrderWorker : BaseWorkerService
+public class CompletePaymentWorker : BaseWorkerService
 {
     private readonly IOrderingService _orderingService;
 
-    public WithdrawOrderWorker(
+    public CompletePaymentWorker(
         IZeebeClient zeebeClient,
-        ILogger<WithdrawOrderWorker> logger,
+        ILogger<CompletePaymentWorker> logger,
         IOrderingService orderingService)
-        : base(zeebeClient, logger, "withdraw_order", "withdraw-order-worker")
+        : base(zeebeClient, logger, "complete_payment", "complete-payment-worker")
     {
         _orderingService = orderingService;
     }
 
     protected override async Task HandleJob(IJobClient jobClient, IJob job)
     {
-        Logger.LogInformation("Processing order withdrawal for job: {JobKey}", job.Key);
+        Logger.LogInformation("Processing payment completion for job: {JobKey}", job.Key);
 
         try
         {
@@ -33,28 +33,28 @@ public class WithdrawOrderWorker : BaseWorkerService
                 throw new Exception("Invalid job variables: OrderRequestId is required");
             }
 
-            Logger.LogWarning("Order {OrderRequestId} timed out. Withdrawing order.",
-                variables.OrderRequestId);
+            Logger.LogInformation("Completing payment for Order: {OrderRequestId}, Amount: {Price:C}",
+                variables.OrderRequestId, variables.Price);
 
-            // Process the timeout/withdrawal
-            await _orderingService.ProcessTimeoutAsync(variables.OrderRequestId);
+            // Process the successful payment
+            await _orderingService.ProcessApprovalAsync(variables.OrderRequestId, "System");
 
             var updatedVariables = new
             {
-                orderStatus = "WITHDRAWN",
-                withdrawalReason = "Balance check timeout",
-                withdrawnAt = DateTime.UtcNow.ToString("O")
+                orderStatus = "COMPLETED",
+                paymentCompletedAt = DateTime.UtcNow.ToString("O"),
+                transactionId = Guid.NewGuid().ToString()
             };
 
             await jobClient.NewCompleteJobCommand(job.Key)
                 .Variables(JsonSerializer.Serialize(updatedVariables))
                 .Send();
 
-            Logger.LogInformation("✅ Order withdrawn for: {OrderRequestId}", variables.OrderRequestId);
+            Logger.LogInformation("✅ Payment completed for Order: {OrderRequestId}", variables.OrderRequestId);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "❌ Failed to withdraw order");
+            Logger.LogError(ex, "❌ Failed to complete payment");
             await jobClient.NewFailCommand(job.Key)
                 .Retries(job.Retries - 1)
                 .ErrorMessage(ex.Message)

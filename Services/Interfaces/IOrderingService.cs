@@ -10,6 +10,7 @@ namespace Camonda_hands_on.Services.Interfaces
         Task ProcessRejectionAsync(string orderRequestId, string reason);
         Task ProcessWithdrawAsync(string orderRequestId, string reason);
         Task ProcessTimeoutAsync(string orderRequestId);
+        Task<bool> CheckBalanceAsync(string orderRequestId);
         Task NotifyProviderAsync(string orderRequestId, string messageType, object data);
         Task<Dictionary<string, object>> GetRequestStatusAsync(string orderRequestId);
         void StoreRequest(string orderRequestId, CreateOrderRequest request);
