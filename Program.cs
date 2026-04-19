@@ -1,8 +1,9 @@
-﻿using Camonda_hands_on.Services.Interfaces;
-using Zeebe.Client;
-using Microsoft.OpenApi.Models;
+﻿using Camonda_hands_on.Services.Catering;
+using Camonda_hands_on.Services.Interfaces;
+using Camonda_hands_on.Services.Ordering;
 using Camonda_hands_on.Workers.Catering;
-using Camonda_hands_on.Services.Catering;
+using Microsoft.OpenApi.Models;
+using Zeebe.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddSingleton<IOrderingService, OrderingService>();
 
 // Register services - Using Singleton for ICateringService
 builder.Services.AddSingleton<ICateringService, CateringService>();
