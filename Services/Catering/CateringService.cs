@@ -1,6 +1,6 @@
 ﻿using Camonda_hands_on.Services.Interfaces;
-using Camonda_hands_on.Models;
 using System.Collections.Concurrent;
+using Camonda_hands_on.Models.Catering;
 
 namespace Camonda_hands_on.Services.Catering;
 

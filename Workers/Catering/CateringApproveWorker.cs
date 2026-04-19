@@ -1,6 +1,4 @@
-﻿namespace Camonda_hands_on.Workers.Catering;
-
-using Camonda_hands_on.Services.Interfaces;
+﻿using Camonda_hands_on.Services.Interfaces;
 using Camonda_hands_on.Workers;
 using Camonda_hands_on.Workers.Catering.Varibables;
 using Microsoft.Extensions.Logging;
@@ -8,6 +6,8 @@ using System.Text.Json;
 using Zeebe.Client;
 using Zeebe.Client.Api.Responses;
 using Zeebe.Client.Api.Worker;
+
+namespace Camonda_hands_on.Workers.Catering;
 
 public class CateringApproveWorker : BaseWorkerService
 {

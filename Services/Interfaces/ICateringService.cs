@@ -1,4 +1,4 @@
-﻿using Camonda_hands_on.Models;
+﻿using Camonda_hands_on.Models.Catering;
 
 namespace Camonda_hands_on.Services.Interfaces;
 
